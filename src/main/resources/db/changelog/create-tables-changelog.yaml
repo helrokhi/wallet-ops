@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: schema-init.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 001-create-wallet-table.xml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 002-create-index-in-wallet-table.xml
+      relativeToChangelogFile: true
+

@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: 003-insert-wallet-table.sql
+      relativeToChangelogFile: true
