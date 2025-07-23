@@ -21,3 +21,14 @@ spring:
 
   liquibase:
     change-log: classpath:/db/changelog/master.yaml
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: wallet-balance-group
+      enable-auto-commit: false
+    producer:
+      key:
+        serializer: org.apache.kafka.common.serialization.StringSerializer
+      value:
+        serializer: org.apache.kafka.common.serialization.JsonSerializer

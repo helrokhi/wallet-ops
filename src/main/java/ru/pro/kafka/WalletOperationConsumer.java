@@ -1,7 +1,6 @@
 package ru.pro.kafka;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +12,6 @@ import java.math.BigDecimal;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class WalletOperationConsumer {
     private final WalletUtils utils;
     private final AmountParser parser;

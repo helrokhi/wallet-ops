@@ -8,7 +8,7 @@ import ru.pro.model.dto.WalletRequest;
 @Component
 @RequiredArgsConstructor
 public class WalletOperationProducer {
-    private final KafkaTemplate<String, WalletRequest> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void sendOperation(WalletRequest request) {
         kafkaTemplate.send("wallet-operations", request.getId().toString(), request);
