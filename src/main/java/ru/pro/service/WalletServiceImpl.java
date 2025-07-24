@@ -1,40 +1,33 @@
 package ru.pro.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.pro.kafka.WalletOperationProducer;
-import ru.pro.mapper.WalletMapper;
 import ru.pro.model.dto.WalletDto;
 import ru.pro.model.dto.WalletRequest;
 import ru.pro.model.entity.Wallet;
-import ru.pro.repository.WalletRepository;
+import ru.pro.utils.WalletUtils;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WalletServiceImpl implements WalletService {
     private final WalletOperationProducer producer;
-    private final WalletRepository repository;
-    private final WalletMapper mapper;
+    private final WalletUtils utils;
 
     @Override
     public WalletDto updateWalletBalance(WalletRequest request) {
+        Wallet wallet = utils.getWalletOrThrow(request.getId());
         producer.sendOperation(request);
-        return toDto(getWalletOrThrow(request.getId()));
+        return utils.toDto(wallet);
     }
 
     @Override
     public WalletDto getWalletBalance(UUID walletId) {
-        return toDto(getWalletOrThrow(walletId));
-    }
-
-    private Wallet getWalletOrThrow(UUID id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Wallet not found: " + id));
-    }
-
-    private WalletDto toDto(Wallet wallet) {
-        return mapper.walletToWalletDto(wallet);
+        return utils.toDto(utils.getWalletOrThrow(walletId));
     }
 }
