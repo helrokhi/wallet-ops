@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.pro.exception.InsufficientFundsException;
 import ru.pro.mapper.WalletMapper;
 import ru.pro.model.dto.WalletDto;
@@ -20,27 +21,35 @@ import java.util.UUID;
 public class WalletUtils {
     private final WalletRepository repository;
     private final WalletMapper mapper;
+    private final AmountParser parser;
 
-    public void processOperation(UUID walletId, OperationType type, BigDecimal amount) {
+    public WalletDto findById(UUID id) {
+        return mapper.walletToWalletDto(getWalletOrThrow(id));
+    }
+
+    @Transactional
+    public WalletDto update(UUID walletId, OperationType type, String amount) {
         Wallet wallet = getWalletOrThrow(walletId);
-        BigDecimal updatedAmount = type.apply(wallet.getAmount(), amount);
-        log.info(String.valueOf(updatedAmount.compareTo(BigDecimal.ZERO) < 0));
-        if (updatedAmount.compareTo(BigDecimal.ZERO) < 0) {
-            log.info(String.valueOf(updatedAmount.compareTo(BigDecimal.ZERO) < 0));
+        BigDecimal sum = parser.parse(amount);
+        BigDecimal updatedAmount = type.apply(wallet.getAmount(), sum);
+        boolean isValid = isValid(updatedAmount);
+        log.info(String.valueOf(isValid));
+        if (isValid(updatedAmount)) {
+            log.info(String.valueOf(isValid));
             throw new InsufficientFundsException(walletId);
         }
 
         wallet.setAmount(updatedAmount);
 
-        repository.save(wallet);
+        return mapper.walletToWalletDto(repository.save(wallet));
     }
 
-    public Wallet getWalletOrThrow(UUID id) {
+    private Wallet getWalletOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Wallet not found: " + id));
     }
 
-    public WalletDto toDto(Wallet wallet) {
-        return mapper.walletToWalletDto(wallet);
+    private boolean isValid(BigDecimal updatedAmount) {
+        return updatedAmount.compareTo(BigDecimal.ZERO) < 0;
     }
 }

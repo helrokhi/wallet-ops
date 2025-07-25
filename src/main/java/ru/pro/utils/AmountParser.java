@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 
 @Component
 public class AmountParser {
-
     public BigDecimal parse(String amount) {
         try {
             return new BigDecimal(amount);
