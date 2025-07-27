@@ -27,8 +27,13 @@ spring:
     consumer:
       group-id: wallet-balance-group
       enable-auto-commit: false
+      key:
+        deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value:
+        deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     producer:
+      group-id: wallet-balance-group
       key:
         serializer: org.apache.kafka.common.serialization.StringSerializer
       value:
-        serializer: org.apache.kafka.common.serialization.JsonSerializer
+        serializer: org.springframework.kafka.support.serializer.JsonSerializer

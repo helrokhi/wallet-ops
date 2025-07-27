@@ -78,6 +78,11 @@ public class GlobalExceptionHandler {
         return handleWalletError(NOT_FOUND, "ENTITY_NOT_FOUND", ex.getMessage(), ex);
     }
 
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ErrorResponse> handleNullPointer(NullPointerException ex) {
+        return handleWalletError(NOT_FOUND, "NULL", ex.getMessage(), ex);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
         return handleWalletError(BAD_REQUEST, "INVALID_ARGUMENT", ex.getMessage(), ex);
