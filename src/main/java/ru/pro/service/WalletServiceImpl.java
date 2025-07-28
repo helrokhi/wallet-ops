@@ -1,15 +1,13 @@
 package ru.pro.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.pro.exception.KafkaException;
-import ru.pro.exception.answers.ErrorResponse;
 import ru.pro.kafka.WalletProducer;
 import ru.pro.kafka.WalletResponseConsumer;
-import ru.pro.mapper.ExceptionMapper;
+import ru.pro.model.dto.ErrorEvent;
 import ru.pro.model.dto.WalletDto;
 import ru.pro.model.dto.WalletRequest;
 
@@ -26,7 +24,6 @@ public class WalletServiceImpl implements WalletService {
     private final WalletProducer producer;
     private final WalletResponseConsumer consumer;
     private final ObjectMapper objectMapper;
-    private final ExceptionMapper exceptionMapper;
 
     @Override
     public WalletDto updateWalletBalance(WalletRequest request) {
@@ -52,12 +49,8 @@ public class WalletServiceImpl implements WalletService {
             return objectMapper.convertValue(dto, WalletDto.class);
         }
 
-        if (value instanceof EntityNotFoundException) {
-            throw objectMapper.convertValue(value, EntityNotFoundException.class);
-        }
-
-        if (value instanceof ErrorResponse error) {
-            throw exceptionMapper.toApiException(objectMapper.convertValue(error, ErrorResponse.class));
+        if (value instanceof ErrorEvent event) {
+            event.throwExceptionBasedOnError();
         }
 
         throw new KafkaException(TOPIC, "Неверный тип данных в ответе на запрос.");

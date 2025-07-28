@@ -8,8 +8,7 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
-import ru.pro.exception.ApiException;
-import ru.pro.mapper.ExceptionMapper;
+import ru.pro.model.dto.ErrorEvent;
 import ru.pro.model.dto.WalletDto;
 import ru.pro.model.dto.WalletRequest;
 import ru.pro.model.enums.OperationType;
@@ -27,7 +26,6 @@ public class WalletRequestConsumer {
 
     private final WalletProducer producer;
     private final WalletUtils utils;
-    private final ExceptionMapper mapper;
 
     @KafkaListener(
             topics = "wallet-operations-request",
@@ -95,10 +93,7 @@ public class WalletRequestConsumer {
     }
 
     public void handleError(String key, Exception ex) {
-        log.error("Error while processing Kafka message with key: {}", key, ex);
-        if (ex instanceof ApiException apiException) {
-            producer.sendOperation(TOPIC, key, mapper.toErrorResponse(apiException));
-        }
-        producer.sendOperation(TOPIC, key, ex);
+        ErrorEvent event = new ErrorEvent(ex.getClass().getName(), ex.getMessage());
+        producer.sendOperation(TOPIC, key, event);
     }
 }

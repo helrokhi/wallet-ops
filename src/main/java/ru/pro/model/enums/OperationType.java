@@ -11,17 +11,15 @@ public enum OperationType {
     DEPOSIT {
         @Override
         public BigDecimal apply(UUID walletId, BigDecimal balance, BigDecimal amount) {
-            log.info("walletId -> {}; balance -> {}; amount -> {}", walletId, balance, amount);
             return balance.add(amount);
         }
     },
     WITHDRAW {
         @Override
         public BigDecimal apply(UUID walletId, BigDecimal balance, BigDecimal amount) {
-            log.info("walletId -> {}; balance -> {}; amount -> {}", walletId, balance, amount);
             BigDecimal updatedAmount = balance.subtract(amount);
             if (updatedAmount.compareTo(BigDecimal.ZERO) < 0) {
-                throw new InsufficientFundsException(walletId);
+                throw new InsufficientFundsException("Недостаточно средств в кошельке " + walletId);
             }
             return updatedAmount;
         }

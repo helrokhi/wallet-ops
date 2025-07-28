@@ -14,13 +14,13 @@ public class WalletProducer {
 
     public void sendOperation(String topic, String message, Object object) {
         log.info("send -> topic: {} message: {} object: {}", topic, message, object);
-        kafkaTemplate.send(topic, message, object);
-//                .whenComplete((result, ex) -> {
-//                    if (ex != null) {
-//                        throw new KafkaException("Failed to send message to Kafka", topic);
-//                    } else {
-//                        log.info("Message {} sent successfully to topic: {}", message, topic);
-//                    }
-//                });
+        kafkaTemplate.send(topic, message, object)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        throw new KafkaException("Failed to send message to Kafka", topic);
+                    } else {
+                        log.info("Message {} sent successfully to topic: {}", message, topic);
+                    }
+                });
     }
 }

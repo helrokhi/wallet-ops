@@ -8,8 +8,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pro.exception.KafkaException;
-import ru.pro.utils.AmountParser;
-import ru.pro.utils.WalletUtils;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -26,9 +24,6 @@ public class WalletResponseConsumer {
     public void prepareFutureResponse() {
         this.futureResponse = new CompletableFuture<>();
     }
-
-    private final WalletUtils utils;
-    private final AmountParser parser;
 
     @KafkaListener(
             topics = "wallet-operations-response",
