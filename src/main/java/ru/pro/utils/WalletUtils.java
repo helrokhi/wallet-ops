@@ -21,17 +21,24 @@ public class WalletUtils {
     private final WalletRepository repository;
     private final WalletMapper mapper;
     private final AmountParser parser;
+    private final IdParser idParser;
+    private final OperationTypeParser typeParser;
 
-    public WalletDto findById(UUID id) {
-        return mapper.walletToWalletDto(getWalletOrThrow(id));
+    public WalletDto findById(String id) {
+        UUID uuid = idParser.parse(id);
+        return mapper.walletToWalletDto(getWalletOrThrow(uuid));
     }
 
     @Transactional
-    public WalletDto update(UUID walletId, OperationType type, String amount) {
-        Wallet wallet = getWalletOrThrow(walletId);
-        BigDecimal balance = wallet.getAmount();
+    public WalletDto update(String walletId, String type, String amount) {
+        UUID uuid = idParser.parse(walletId);
+        OperationType operationType = typeParser.parse(type);
         BigDecimal sum = parser.parse(amount);
-        BigDecimal updatedAmount = type.apply(walletId, balance, sum);
+
+        Wallet wallet = getWalletOrThrow(uuid);
+        BigDecimal balance = wallet.getAmount();
+
+        BigDecimal updatedAmount = operationType.apply(uuid, balance, sum);
         wallet.setAmount(updatedAmount);
         return mapper.walletToWalletDto(repository.save(wallet));
     }

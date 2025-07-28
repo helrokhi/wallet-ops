@@ -10,13 +10,16 @@ import java.util.UUID;
 
 @Data
 public class WalletRequest {
-    @NotNull
-    private UUID id;
+    @NotBlank
+    @Pattern(regexp ="^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            message = "ID must be a valid UUID format")
+    private String id;
 
     @NotBlank
     @Pattern(regexp = "\\d+(\\.\\d{1,2})?", message = "Amount must be a number with max two decimal places")
     private String amount;
 
-    @NotNull
-    private OperationType type;
+    @NotBlank
+    @Pattern(regexp = "DEPOSIT|WITHDRAW", message = "Operation type must be either DEPOSIT or WITHDRAW")
+    private String type;
 }

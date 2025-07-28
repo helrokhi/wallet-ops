@@ -22,7 +22,7 @@ public class WalletController implements WalletApi {
     }
 
     @Override
-    public ResponseEntity<WalletDto> getWalletBalance(UUID walletId) {
+    public ResponseEntity<WalletDto> getWalletBalance(String walletId) {
         WalletDto walletDTO = service.getWalletBalance(walletId);
         return ResponseEntity.ok(walletDTO);
     }

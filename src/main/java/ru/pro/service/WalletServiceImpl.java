@@ -32,7 +32,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletDto getWalletBalance(UUID walletId) {
+    public WalletDto getWalletBalance(String walletId) {
         Object response = sendAndReceive(FIND_BY_ID, walletId);
         return handleResponse(response, walletId);
     }
@@ -43,7 +43,7 @@ public class WalletServiceImpl implements WalletService {
         return consumer.getFutureResponse();
     }
 
-    private WalletDto handleResponse(Object value, UUID walletId) {
+    private WalletDto handleResponse(Object value, String walletId) {
         if (value instanceof WalletDto dto) {
             log.info("Обработан кошелек с ID {}", walletId);
             return objectMapper.convertValue(dto, WalletDto.class);

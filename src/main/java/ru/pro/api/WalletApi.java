@@ -30,7 +30,7 @@ public interface WalletApi {
             value = "/wallets/{walletId}",
             method = GET,
             produces = "application/json")
-    default ResponseEntity<WalletDto> getWalletBalance(@PathVariable @Valid UUID walletId) {
+    default ResponseEntity<WalletDto> getWalletBalance(@PathVariable @Valid String walletId) {
         return new ResponseEntity<>(NOT_IMPLEMENTED);
     }
 }

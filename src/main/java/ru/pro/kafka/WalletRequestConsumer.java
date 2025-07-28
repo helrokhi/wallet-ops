@@ -56,8 +56,8 @@ public class WalletRequestConsumer {
 
     private void handleFindById(Object value) {
         try {
-            if (!(value instanceof UUID id)) {
-                log.warn("Expected UUID for {}, got: {}", FIND_BY_ID, value.getClass());
+            if (!(value instanceof String id)) {
+                log.warn("Expected String for {}, got: {}", FIND_BY_ID, value.getClass());
                 return;
             }
             log.info("Finding wallet by id: {}", id);
@@ -77,8 +77,8 @@ public class WalletRequestConsumer {
             }
             log.info("WalletRequest: {} Class {}", value, value.getClass());
             WalletRequest request = (WalletRequest) value;
-            UUID walletId = request.getId();
-            OperationType type = request.getType();
+            String walletId = request.getId();
+            String type = request.getType();
             String amount = request.getAmount();
 
             WalletDto updatedDto = utils.update(walletId, type, amount);
