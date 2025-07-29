@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static ru.pro.model.Constants.TOPIC_REQUEST;
 
 @Component
 @RequiredArgsConstructor
@@ -54,7 +55,7 @@ public class WalletResponseConsumer {
             return result;
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             Thread.currentThread().interrupt();
-            throw new KafkaException("wallet-operations-response", e.getMessage());
+            throw new KafkaException(TOPIC_REQUEST, e.getMessage());
         }
     }
 

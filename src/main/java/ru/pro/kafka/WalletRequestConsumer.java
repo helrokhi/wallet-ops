@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
@@ -13,14 +12,15 @@ import ru.pro.model.dto.WalletDto;
 import ru.pro.model.dto.WalletRequest;
 import ru.pro.utils.WalletUtils;
 
+import static org.springframework.kafka.support.KafkaHeaders.RECEIVED_KEY;
+import static ru.pro.model.Constants.FIND_BY_ID;
+import static ru.pro.model.Constants.TOPIC_RESPONSE;
+import static ru.pro.model.Constants.UPDATE;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class WalletRequestConsumer {
-    private static final String TOPIC = "wallet-operations-response";
-    private static final String FIND_BY_ID = "findById";
-    private static final String UPDATE = "update";
-
     private final WalletProducer producer;
     private final WalletUtils utils;
 
@@ -30,7 +30,7 @@ public class WalletRequestConsumer {
             containerFactory = "objectConcurrentKafkaListenerContainerFactory")
     public void listenForClientRequest(
             @Payload Object object,
-            @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String key,
+            @Header(value = RECEIVED_KEY, required = false) String key,
             ConsumerRecord<String, Object> consumerRecord) {
         log.info("Received object: {}", object);
         log.info("consumerRecord.value() {}", consumerRecord.value());
@@ -60,7 +60,7 @@ public class WalletRequestConsumer {
             log.info("Finding wallet by id: {}", id);
             WalletDto dto = utils.findById(id);
 
-            producer.sendOperation(TOPIC, FIND_BY_ID, dto);
+            producer.sendOperation(TOPIC_RESPONSE, FIND_BY_ID, dto);
         } catch (Exception e) {
             handleError(FIND_BY_ID, e);
         }
@@ -81,7 +81,7 @@ public class WalletRequestConsumer {
             WalletDto updatedDto = utils.update(walletId, type, amount);
 
             log.info("Successfully updated wallet with id: {} {}", walletId, updatedDto);
-            producer.sendOperation(TOPIC, UPDATE, updatedDto);
+            producer.sendOperation(TOPIC_RESPONSE, UPDATE, updatedDto);
         } catch (Exception e) {
             log.info("Exception -> {}", e.getClass());
             handleError(UPDATE, e);
@@ -91,6 +91,6 @@ public class WalletRequestConsumer {
 
     public void handleError(String key, Exception ex) {
         ErrorEvent event = new ErrorEvent(ex.getClass().getName(), ex.getMessage());
-        producer.sendOperation(TOPIC, key, event);
+        producer.sendOperation(TOPIC_RESPONSE, key, event);
     }
 }
