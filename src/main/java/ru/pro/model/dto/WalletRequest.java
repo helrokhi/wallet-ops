@@ -1,25 +1,23 @@
 package ru.pro.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.pro.model.enums.OperationType;
-
-import java.util.UUID;
 
 @Data
+@AllArgsConstructor
 public class WalletRequest {
-    @NotBlank
-    @Pattern(regexp ="^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+    @NotBlank(message = "Id cannot be blank")
+    @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
             message = "ID must be a valid UUID format")
     private String id;
 
-    @NotBlank
+    @NotBlank(message = "amount cannot be blank")
     @Pattern(regexp = "\\d+(\\.\\d{1,2})?", message = "Amount must be a number with max two decimal places")
     private String amount;
 
-    @NotBlank
+    @NotBlank(message = "type cannot be blank")
     @Pattern(regexp = "DEPOSIT|WITHDRAW", message = "Operation type must be either DEPOSIT or WITHDRAW")
     private String type;
 }

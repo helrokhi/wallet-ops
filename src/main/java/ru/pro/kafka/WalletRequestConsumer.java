@@ -11,10 +11,7 @@ import org.springframework.stereotype.Service;
 import ru.pro.model.dto.ErrorEvent;
 import ru.pro.model.dto.WalletDto;
 import ru.pro.model.dto.WalletRequest;
-import ru.pro.model.enums.OperationType;
 import ru.pro.utils.WalletUtils;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
