@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.pro.model.dto.WalletDto;
 import ru.pro.model.dto.WalletRequest;
-import ru.pro.service.WalletService;
+import ru.pro.service.WalletRequestService;
 
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -40,13 +40,13 @@ class WalletControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private WalletService service;
+    private WalletRequestService service;
 
     @TestConfiguration
     static class TestConfig {
         @Bean
-        public WalletService clientService() {
-            return mock(WalletService.class);
+        public WalletRequestService clientService() {
+            return mock(WalletRequestService.class);
         }
     }
 

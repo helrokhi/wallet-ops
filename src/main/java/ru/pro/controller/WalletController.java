@@ -6,14 +6,12 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.pro.api.WalletApi;
 import ru.pro.model.dto.WalletDto;
 import ru.pro.model.dto.WalletRequest;
-import ru.pro.service.WalletService;
-
-import java.util.UUID;
+import ru.pro.service.WalletRequestService;
 
 @RestController
 @RequiredArgsConstructor
 public class WalletController implements WalletApi {
-    private final WalletService service;
+    private final WalletRequestService service;
 
     @Override
     public ResponseEntity<WalletDto> updateWalletBalance(WalletRequest walletRequest) {

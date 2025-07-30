@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import ru.pro.model.dto.ErrorEvent;
 import ru.pro.model.dto.WalletDto;
 import ru.pro.model.dto.WalletRequest;
-import ru.pro.utils.WalletUtils;
+import ru.pro.service.WalletResponseService;
 
 import static org.springframework.kafka.support.KafkaHeaders.RECEIVED_KEY;
 import static ru.pro.model.Constants.FIND_BY_ID;
@@ -22,7 +22,7 @@ import static ru.pro.model.Constants.UPDATE;
 @Slf4j
 public class WalletRequestConsumer {
     private final WalletProducer producer;
-    private final WalletUtils utils;
+    private final WalletResponseService service;
 
     @KafkaListener(
             topics = "wallet-operations-request",
@@ -58,7 +58,7 @@ public class WalletRequestConsumer {
                 return;
             }
             log.info("Finding wallet by id: {}", id);
-            WalletDto dto = utils.findById(id);
+            WalletDto dto = service.findById(id);
 
             producer.sendOperation(TOPIC_RESPONSE, FIND_BY_ID, dto);
         } catch (Exception e) {
@@ -78,7 +78,7 @@ public class WalletRequestConsumer {
             String type = request.getType();
             String amount = request.getAmount();
 
-            WalletDto updatedDto = utils.update(walletId, type, amount);
+            WalletDto updatedDto = service.update(walletId, type, amount);
 
             log.info("Successfully updated wallet with id: {} {}", walletId, updatedDto);
             producer.sendOperation(TOPIC_RESPONSE, UPDATE, updatedDto);

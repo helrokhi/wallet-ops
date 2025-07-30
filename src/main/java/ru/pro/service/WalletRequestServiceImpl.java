@@ -11,16 +11,14 @@ import ru.pro.model.dto.ErrorEvent;
 import ru.pro.model.dto.WalletDto;
 import ru.pro.model.dto.WalletRequest;
 
-import java.util.UUID;
+import static ru.pro.model.Constants.FIND_BY_ID;
+import static ru.pro.model.Constants.TOPIC_REQUEST;
+import static ru.pro.model.Constants.UPDATE;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class WalletServiceImpl implements WalletService {
-    private static final String TOPIC = "wallet-operations-request";
-    private static final String FIND_BY_ID = "findById";
-    private static final String UPDATE = "update";
-
+public class WalletRequestServiceImpl implements WalletRequestService {
     private final WalletProducer producer;
     private final WalletResponseConsumer consumer;
     private final ObjectMapper objectMapper;
@@ -39,7 +37,7 @@ public class WalletServiceImpl implements WalletService {
 
     private Object sendAndReceive(String operation, Object payload) {
         consumer.prepareFutureResponse();
-        producer.sendOperation(TOPIC, operation, payload);
+        producer.sendOperation(TOPIC_REQUEST, operation, payload);
         return consumer.getFutureResponse();
     }
 
@@ -53,6 +51,6 @@ public class WalletServiceImpl implements WalletService {
             event.throwExceptionBasedOnError();
         }
 
-        throw new KafkaException(TOPIC, "Неверный тип данных в ответе на запрос.");
+        throw new KafkaException(TOPIC_REQUEST, "Неверный тип данных в ответе на запрос.");
     }
 }
