@@ -10,12 +10,13 @@ import ru.pro.model.dto.WalletDto;
 import ru.pro.model.entity.Wallet;
 import ru.pro.model.enums.OperationType;
 import ru.pro.repository.WalletRepository;
-import ru.pro.utils.AmountParser;
-import ru.pro.utils.IdParser;
-import ru.pro.utils.OperationTypeParser;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+
+import static ru.pro.utils.Parser.UUIDParse;
+import static ru.pro.utils.Parser.amountParse;
+import static ru.pro.utils.Parser.operationTypeParse;
 
 @Service
 @RequiredArgsConstructor
@@ -23,22 +24,19 @@ import java.util.UUID;
 public class WalletResponseServiceImpl implements WalletResponseService {
     private final WalletRepository repository;
     private final WalletMapper mapper;
-    private final AmountParser parser;
-    private final IdParser idParser;
-    private final OperationTypeParser typeParser;
 
     @Override
     public WalletDto findById(String id) {
-        UUID uuid = idParser.parse(id);
+        UUID uuid = UUIDParse(id);
         return mapper.walletToWalletDto(getWalletOrThrow(uuid));
     }
 
     @Override
     @Transactional
     public WalletDto update(String walletId, String type, String amount) {
-        UUID uuid = idParser.parse(walletId);
-        OperationType operationType = typeParser.parse(type);
-        BigDecimal sum = parser.parse(amount);
+        UUID uuid = UUIDParse(walletId);
+        OperationType operationType = operationTypeParse(type);
+        BigDecimal sum = amountParse(amount);
 
         Wallet wallet = getWalletOrThrow(uuid);
         BigDecimal balance = wallet.getAmount();
